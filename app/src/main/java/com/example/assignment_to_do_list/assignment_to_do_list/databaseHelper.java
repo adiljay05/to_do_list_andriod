@@ -1,6 +1,8 @@
 package com.example.assignment_to_do_list.assignment_to_do_list;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -18,7 +20,7 @@ public class databaseHelper extends SQLiteOpenHelper {
 
     public databaseHelper(Context context) {
         super(context, DATABASE_NAME, null, 1);
-        SQLiteDatabase db=this.getWritableDatabase();
+        SQLiteDatabase db = this.getWritableDatabase();
     }
 
     @Override
@@ -33,5 +35,24 @@ public class databaseHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS"+TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS"+TABLE2_NAME);
         onCreate(sqLiteDatabase);
+    }
+
+    public Boolean insertData(String name) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("Name",name);
+        long result = db.insert(TABLE_NAME,null ,contentValues);
+        if(result == -1)
+            return false;
+        else
+            return true;
+    }
+
+
+    public Cursor getData()
+    {
+        SQLiteDatabase db=this.getWritableDatabase();
+        Cursor result=db.rawQuery("select * from data",null);
+        return result;
     }
 }
