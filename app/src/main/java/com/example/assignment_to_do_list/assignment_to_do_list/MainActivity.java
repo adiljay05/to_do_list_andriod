@@ -49,16 +49,16 @@ public class MainActivity extends Activity {
         mydb =new databaseHelper(this);
         ListView l=findViewById(R.id.listView);
         final ArrayAdapter<String> aa = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, arr);
+            android.R.layout.simple_list_item_1, arr);
         l.setAdapter(aa);
         l.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                //set a new intent here to start a new activity and show the items of a list.
-                Intent in=new Intent(getApplicationContext(),items.class);
-                in.putExtra("name",aa.getItem(i).toString());
-                startActivity(in);
-                Toast.makeText(getApplicationContext(),aa.getItem(i),Toast.LENGTH_SHORT).show();
+            Intent in=new Intent(getApplicationContext(),items.class);
+            in.putExtra("name",aa.getItem(i));
+
+            startActivity(in);
+            Toast.makeText(getApplicationContext(),aa.getItem(i),Toast.LENGTH_SHORT).show();
             }
         });
     }

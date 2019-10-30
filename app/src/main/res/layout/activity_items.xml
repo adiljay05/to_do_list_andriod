@@ -6,12 +6,20 @@
     android:layout_height="match_parent"
     tools:context=".items">
 
-    <TextView
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:text="Add new item"
+        android:id="@+id/newItemButton"
+        tools:ignore="HardcodedText" />
+    <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="jawad"
-        android:id="@+id/text"
+        android:id="@+id/listView"
+        android:layout_below="@id/newItemButton"
+        >
 
-        />
+    </ListView>
+
 
 </RelativeLayout>

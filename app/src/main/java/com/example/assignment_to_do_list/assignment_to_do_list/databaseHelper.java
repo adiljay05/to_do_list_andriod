@@ -2,25 +2,28 @@ package com.example.assignment_to_do_list.assignment_to_do_list;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+import android.widget.Toast;
 
 public class databaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME="list.db";
     private static final String TABLE_NAME="data";
     private static final String TABLE2_NAME="tasks";
-    private static final String data_col1="ID";
+//    private static final String data_col1="ID";
     private static final String data_col2="Name";
-    private static final String tasks_col1="ID";
-    private static final String tasks_col2="dataID";
-    private static final String tasks_col3="description";
-    private static final String tasks_col4="isCompleted";
+//    private static final String tasks_col1="ID";
+//    private static final String tasks_col2="dataID";
+//    private static final String tasks_col3="description";
+//    private static final String tasks_col4="isCompleted";
 
 
-    public databaseHelper(Context context) {
+    databaseHelper(Context context) {
         super(context, DATABASE_NAME, null, 1);
-        SQLiteDatabase db = this.getWritableDatabase();
+        //SQLiteDatabase db = this.getWritableDatabase();
     }
 
     @Override
@@ -37,19 +40,46 @@ public class databaseHelper extends SQLiteOpenHelper {
         onCreate(sqLiteDatabase);
     }
 
-    public Boolean insertData(String name) {
+    Boolean insertData(String name) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("Name",name);
         long result = db.insert(TABLE_NAME,null ,contentValues);
-        if(result == -1)
-            return false;
-        else
-            return true;
+        return result != -1;
     }
 
 
-    public Cursor getData()
+    Boolean insertTask(String name,int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("description",name);
+        contentValues.put("dataID",id);
+        contentValues.put("isCompleted",0);
+        long result1 = db.insert(TABLE2_NAME,null ,contentValues);
+        if (result1 != -1) return true;
+        else return false;
+    }
+
+    int getID(String name1)
+    {
+        SQLiteDatabase db=this.getWritableDatabase();
+        Cursor result=db.rawQuery("select * from data where Name='"+name1+"'",null);
+        int id1=-1;
+        if (result.moveToFirst()) {
+            id1=Integer.parseInt(result.getString(0));
+        }
+        //Log.i("ID",""+id1);
+        return id1;
+    }
+
+    Cursor getTasks(int id)
+    {
+        SQLiteDatabase db=this.getWritableDatabase();
+        Cursor result=db.rawQuery("select * from tasks where dataID='"+id+"'",null);
+        return result;
+    }
+
+    Cursor getData()
     {
         SQLiteDatabase db=this.getWritableDatabase();
         Cursor result=db.rawQuery("select * from data",null);
