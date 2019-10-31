@@ -60,6 +60,20 @@ public class databaseHelper extends SQLiteOpenHelper {
         else return false;
     }
 
+    int updateTask(String name)
+    {
+        SQLiteDatabase db=this.getWritableDatabase();
+        Cursor res=  db.rawQuery("select * from tasks where description='"+name+"'",null);
+        int isChecked=-1;
+        if (res.moveToFirst()) {
+            isChecked=Integer.parseInt(res.getString(3));
+        }
+        int n=0;
+        if(isChecked==0)n=1;
+        else n=0;
+            db.execSQL("update tasks set isCompleted="+n+" where description='"+name+"'");
+        return 0;
+    }
     int getID(String name1)
     {
         SQLiteDatabase db=this.getWritableDatabase();
@@ -68,7 +82,6 @@ public class databaseHelper extends SQLiteOpenHelper {
         if (result.moveToFirst()) {
             id1=Integer.parseInt(result.getString(0));
         }
-        //Log.i("ID",""+id1);
         return id1;
     }
 

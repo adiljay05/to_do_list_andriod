@@ -25,6 +25,7 @@ public class items extends Activity {
     public String m_Text = "";
     ArrayList<Integer> ids=new ArrayList<>();
     ArrayList<String> arr=new ArrayList<>();
+    ArrayList<Integer> checkedItems=new ArrayList<>();
     public String d;
     public int id;
     @Override
@@ -57,21 +58,36 @@ public class items extends Activity {
             while (data.moveToNext()) {
                 arr.add(data.getString(2));
                 ids.add(Integer.valueOf(data.getString(0)));
+                checkedItems.add(Integer.valueOf(data.getString(3)));
             }
             Toast.makeText(this,arr.toString(),Toast.LENGTH_SHORT).show();
         }
         ListView l=findViewById(R.id.listView);
+        int checkedIndex=arr.size();
         final ArrayAdapter<String> aa = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, arr);
-        l.setAdapter(aa);
+                android.R.layout.simple_list_item_multiple_choice, arr);
+        l.setChoiceMode(l.CHOICE_MODE_MULTIPLE);
 
-//        l.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//
-//                Toast.makeText(getApplicationContext(),aa.getItem(i),Toast.LENGTH_SHORT).show();
-//            }
-//        });
+        l.setItemsCanFocus(false);
+        l.setAdapter(aa);
+        for(int i=0;i<checkedItems.size();i++)
+        {
+            if(checkedItems.get(i)==1) {
+                //Toast.makeText(this,i+"",Toast.LENGTH_SHORT).show();
+                l.setItemChecked(i, true);
+                //l.getItemIdAtPosition(--checkedIndex);
+                //l.getItemAtPosition(--checkedIndex);
+            }
+        }
+        l.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                mydb.updateTask(aa.getItem(i));
+
+                //Toast.makeText(getApplicationContext(),checkedItems.get(i),Toast.LENGTH_SHORT).show();
+            }
+        });
     }
     public void openDialogue()
     {
