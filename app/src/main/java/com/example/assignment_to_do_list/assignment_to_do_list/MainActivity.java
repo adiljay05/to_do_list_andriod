@@ -66,7 +66,55 @@ public class MainActivity extends Activity {
             Toast.makeText(getApplicationContext(),aa.getItem(i),Toast.LENGTH_SHORT).show();
             }
         });
+        l.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String str=aa.getItem(i);
+                openUpdateDialogue(str);
+                return true;
+            }
+        });
     }
+    public void openUpdateDialogue(final String str)
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Enter list Name");
+
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT );
+        builder.setView(input);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                m_Text = input.getText().toString();
+                if(m_Text=="")
+                    return;
+                if(arr.contains(m_Text))
+                    Toast.makeText(getApplicationContext(),"name already exists",Toast.LENGTH_SHORT).show();
+                else {
+                    mydb=new databaseHelper(getApplicationContext());
+                    mydb.updateData(m_Text,str);
+                    Intent intent = getIntent();
+                    overridePendingTransition(0, 0);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                    finish();
+                    overridePendingTransition(0, 0);
+                    startActivity(intent);
+                }
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+                Toast.makeText(getApplicationContext(),"Canceled by user", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        builder.show();
+    }
+
     public void openDialogue()
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);

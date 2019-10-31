@@ -60,6 +60,11 @@ public class databaseHelper extends SQLiteOpenHelper {
         else return false;
     }
 
+    void updateData(String newName,String str)
+    {
+        SQLiteDatabase db=this.getWritableDatabase();
+        db.execSQL("update "+TABLE_NAME+" set Name='"+newName+"' where Name='"+str+"'");
+    }
     int updateTask(String name)
     {
         SQLiteDatabase db=this.getWritableDatabase();
@@ -68,7 +73,6 @@ public class databaseHelper extends SQLiteOpenHelper {
         if (res.moveToFirst()) {
             isChecked=Integer.parseInt(res.getString(3));
         }
-        
         int n;
         if(isChecked==0)n=1;
         else n=0;

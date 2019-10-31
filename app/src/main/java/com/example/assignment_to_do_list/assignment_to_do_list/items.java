@@ -62,8 +62,28 @@ public class items extends Activity {
             }
             Toast.makeText(this,arr.toString(),Toast.LENGTH_SHORT).show();
         }
-        ListView l=findViewById(R.id.listView);
+        int size=checkedItems.size();
         int checkedIndex=arr.size();
+        for(int i=0;i<size;i++)
+        {
+            if(checkedItems.get(i)==1)
+            {
+                String n=arr.get(i);
+                int num=checkedItems.get(i);
+                int id=ids.get(i);
+                ids.set(i,ids.get(checkedIndex-1));
+                checkedItems.set(i,checkedItems.get(checkedIndex-1));
+                arr.set(i,arr.get(checkedIndex-1));
+                ids.set(checkedIndex-1,id);
+                arr.set(checkedIndex-1,n);
+                checkedItems.set(checkedIndex-1,num);
+                i--;
+                size--;
+                checkedIndex--;
+            }
+        }
+        ListView l=findViewById(R.id.listView);
+
         final ArrayAdapter<String> aa = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_multiple_choice, arr);
         l.setChoiceMode(l.CHOICE_MODE_MULTIPLE);
@@ -75,15 +95,29 @@ public class items extends Activity {
             if(checkedItems.get(i)==1) {
                 //Toast.makeText(this,i+"",Toast.LENGTH_SHORT).show();
                 l.setItemChecked(i, true);
+
+                //aa.notifyDataSetChanged();
                 //l.getItemIdAtPosition(--checkedIndex);
                 //l.getItemAtPosition(--checkedIndex);
             }
         }
+        int sizeOfAdapter=arr.size();
+
         l.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
                 mydb.updateTask(aa.getItem(i));
+                //String str=aa.getItem(i);
+                //aa.notifyDataSetChanged();
+
+
+                Intent intent = getIntent();
+                overridePendingTransition(0, 0);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                finish();
+                overridePendingTransition(0, 0);
+                startActivity(intent);
 
                 //Toast.makeText(getApplicationContext(),checkedItems.get(i),Toast.LENGTH_SHORT).show();
             }
