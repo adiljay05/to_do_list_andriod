@@ -68,6 +68,7 @@ public class databaseHelper extends SQLiteOpenHelper {
         if (res.moveToFirst()) {
             isChecked=Integer.parseInt(res.getString(3));
         }
+        
         int n;
         if(isChecked==0)n=1;
         else n=0;
