@@ -68,7 +68,7 @@ public class databaseHelper extends SQLiteOpenHelper {
         if (res.moveToFirst()) {
             isChecked=Integer.parseInt(res.getString(3));
         }
-        int n=0;
+        int n;
         if(isChecked==0)n=1;
         else n=0;
             db.execSQL("update tasks set isCompleted="+n+" where description='"+name+"'");
