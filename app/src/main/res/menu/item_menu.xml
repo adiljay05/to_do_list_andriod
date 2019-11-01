@@ -9,4 +9,8 @@
         android:title="Update dueDate"
         android:id="@+id/updateDueDate"
         />
+    <item tools:ignore="ExtraText,HardcodedText"
+        android:title="Remove Item"
+        android:id="@+id/remove"
+        />
 </menu>

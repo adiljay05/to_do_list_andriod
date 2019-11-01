@@ -202,6 +202,7 @@ public class items extends Activity implements DatePickerDialog.OnDateSetListene
                 else {
                     mydb=new databaseHelper(getApplicationContext());
                     mydb.updateTasks(m_Text,str);
+                    mydb.close();
                     Intent intent = getIntent();
                     overridePendingTransition(0, 0);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
@@ -222,6 +223,17 @@ public class items extends Activity implements DatePickerDialog.OnDateSetListene
         builder.show();
     }
 
+    public void getNewDate()
+    {
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                items.this,
+                items.this,
+                Calendar.getInstance().get(Calendar.YEAR),
+                Calendar.getInstance().get(Calendar.MONTH),
+                Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
+        datePickerDialog.show();
+    }
+
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
@@ -240,6 +252,22 @@ public class items extends Activity implements DatePickerDialog.OnDateSetListene
                 aa.notifyDataSetChanged();
             case R.id.updateDueDate:
                 //update due date
+                getNewDate();
+                String str1 = arr.get(info.position);
+                mydb=new databaseHelper(getApplicationContext());
+                //Toast.makeText(this,date,Toast.LENGTH_SHORT).show();
+                mydb.updateDueDate(str1,date);
+                mydb.close();
+                aa.notifyDataSetChanged();
+
+            case R.id.remove:
+                String str2 = arr.get(info.position);
+                mydb=new databaseHelper(getApplicationContext());
+                arr.remove(info.position);
+                mydb.removeItem(str2);
+                mydb.close();
+                aa.notifyDataSetChanged();
+
         }
         return super.onContextItemSelected(item);
     }

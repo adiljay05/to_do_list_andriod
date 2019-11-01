@@ -73,6 +73,16 @@ public class databaseHelper extends SQLiteOpenHelper {
         db.execSQL("update "+TABLE2_NAME+" set description='"+newName+"' where description='"+str+"'");
     }
 
+    void updateDueDate(String description,String date)
+    {
+        SQLiteDatabase db=this.getWritableDatabase();
+        db.execSQL("update "+TABLE2_NAME+" set dueDate='"+date+"' where description='"+description+"'");
+    }
+    void removeItem(String description)
+    {
+        SQLiteDatabase db=this.getWritableDatabase();
+        db.execSQL("delete from "+TABLE2_NAME+" WHERE description='"+description+"'");
+    }
     int updateTask(String name)
     {
         SQLiteDatabase db=this.getWritableDatabase();
