@@ -298,7 +298,10 @@ public class items extends Activity implements DatePickerDialog.OnDateSetListene
                 aa.notifyDataSetChanged();
                 break;
             case R.id.move:
+                Intent in=new Intent(getApplicationContext(),moveApplications.class);
+                in.putExtra("item",arr.get(info.position));
 
+                startActivity(in);
                 break;
 
         }

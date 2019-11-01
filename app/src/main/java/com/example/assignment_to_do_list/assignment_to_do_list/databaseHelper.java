@@ -107,7 +107,14 @@ public class databaseHelper extends SQLiteOpenHelper {
         }
         return id1;
     }
+    void moveItem(String newName,String item)
+    {
+        SQLiteDatabase db=this.getWritableDatabase();
+        int newIdOfList=getID(newName);
+        db.execSQL("update "+TABLE2_NAME+" SET dataID='"+newIdOfList+"' where description='"+item+"'");
 
+
+    }
     Cursor getTasks(int id)
     {
         SQLiteDatabase db=this.getWritableDatabase();
@@ -120,5 +127,6 @@ public class databaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db=this.getWritableDatabase();
         Cursor result=db.rawQuery("select * from data",null);
         return result;
+
     }
 }

@@ -61,8 +61,7 @@ public class MainActivity extends Activity {
         });
         mydb =new databaseHelper(this);
         ListView l=findViewById(R.id.listView);
-        aa= new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, arr);
+        aa= new ArrayAdapter<>(this,android.R.layout.simple_list_item_1, arr);
 
         l.setAdapter(aa);
         registerForContextMenu(l);
