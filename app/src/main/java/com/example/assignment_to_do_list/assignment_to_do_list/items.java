@@ -1,13 +1,14 @@
 package com.example.assignment_to_do_list.assignment_to_do_list;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.text.InputType;
 import android.view.ContextMenu;
 import android.view.MenuInflater;
@@ -40,12 +41,12 @@ public class items extends Activity implements DatePickerDialog.OnDateSetListene
     public String d;
     public int id;
     public int checkedCounter=0,totalCounter=0;
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_items);
-        String str = getIntent().getStringExtra("name");
-        d=str;
+        d= getIntent().getStringExtra("name");
         mydb=new databaseHelper(getApplicationContext());
         //id=mydb.getID("jawad");
 
@@ -123,7 +124,6 @@ public class items extends Activity implements DatePickerDialog.OnDateSetListene
                 //l.getItemAtPosition(--checkedIndex);
             }
         }
-        int sizeOfAdapter=arr.size();
 
         l.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -166,6 +166,7 @@ public class items extends Activity implements DatePickerDialog.OnDateSetListene
                     Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
                 datePickerDialog.show();
                 datePickerDialog.setButton(DialogInterface.BUTTON_POSITIVE, "", new DialogInterface.OnClickListener() {
+                    @SuppressLint("SetTextI18n")
                     public void onClick(DialogInterface dialog, int which) {
                         if (which == DialogInterface.BUTTON_POSITIVE ){
                             //Toast.makeText(getApplicationContext(),"Date Selected",Toast.LENGTH_SHORT).show();
@@ -268,7 +269,7 @@ public class items extends Activity implements DatePickerDialog.OnDateSetListene
     }
 
     @Override
-    public boolean onContextItemSelected(MenuItem item) {
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
         AdapterView.AdapterContextMenuInfo info= (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         switch (item.getItemId())
         {

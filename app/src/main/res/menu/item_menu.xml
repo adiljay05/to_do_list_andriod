@@ -13,4 +13,8 @@
         android:title="Remove Item"
         android:id="@+id/remove"
         />
+    <item tools:ignore="ExtraText,HardcodedText"
+        android:title="move Item"
+        android:id="@+id/move"
+        />
 </menu>
