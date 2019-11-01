@@ -9,8 +9,12 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.text.InputType;
+import android.view.ContextMenu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -29,7 +33,7 @@ public class MainActivity extends Activity {
     public String m_Text = "";
     public databaseHelper mydb;
     ArrayList<String> arr=new ArrayList<>();
-
+    ArrayAdapter<String> aa ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,9 +61,11 @@ public class MainActivity extends Activity {
         });
         mydb =new databaseHelper(this);
         ListView l=findViewById(R.id.listView);
-        final ArrayAdapter<String> aa = new ArrayAdapter<>(this,
-            android.R.layout.simple_list_item_1, arr);
+        aa= new ArrayAdapter<>(this,
+                android.R.layout.simple_list_item_1, arr);
+
         l.setAdapter(aa);
+        registerForContextMenu(l);
         l.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -70,14 +76,7 @@ public class MainActivity extends Activity {
             Toast.makeText(getApplicationContext(),aa.getItem(i),Toast.LENGTH_SHORT).show();
             }
         });
-        l.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                String str=aa.getItem(i);
-                openUpdateDialogue(str);
-                return true;
-            }
-        });
+
     }
     public void openUpdateDialogue(final String str)
     {
@@ -162,5 +161,23 @@ public class MainActivity extends Activity {
         builder.show();
     }
 
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater n=getMenuInflater();
+        n.inflate(R.menu.main_menu,menu);
+    }
 
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterContextMenuInfo info= (AdapterContextMenuInfo) item.getMenuInfo();
+        switch (item.getItemId())
+        {
+            case R.id.update:
+                String str = arr.get(info.position);
+                openUpdateDialogue(str);
+                aa.notifyDataSetChanged();
+        }
+        return super.onContextItemSelected(item);
+    }
 }

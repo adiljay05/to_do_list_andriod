@@ -9,6 +9,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.InputType;
+import android.view.ContextMenu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -31,6 +34,7 @@ public class items extends Activity implements DatePickerDialog.OnDateSetListene
     ArrayList<String> arr=new ArrayList<>();
     ArrayList<Integer> checkedItems=new ArrayList<>();
     ArrayList<String> date1=new ArrayList<>();
+    ArrayAdapter<String> aa;
     public String d;
     public int id;
     @Override
@@ -90,10 +94,10 @@ public class items extends Activity implements DatePickerDialog.OnDateSetListene
         }
         ListView l=findViewById(R.id.listView);
 
-        final ArrayAdapter<String> aa = new ArrayAdapter<>(this,
+        aa = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_multiple_choice, arr);
         l.setChoiceMode(l.CHOICE_MODE_MULTIPLE);
-
+        registerForContextMenu(l);
         l.setItemsCanFocus(false);
         l.setAdapter(aa);
         for(int i=0;i<checkedItems.size();i++)
@@ -114,10 +118,6 @@ public class items extends Activity implements DatePickerDialog.OnDateSetListene
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
                 mydb.updateTask(aa.getItem(i));
-                //String str=aa.getItem(i);
-                //aa.notifyDataSetChanged();
-
-
                 Intent intent = getIntent();
                 overridePendingTransition(0, 0);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
@@ -181,4 +181,67 @@ public class items extends Activity implements DatePickerDialog.OnDateSetListene
     public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
         date= String.valueOf(i2)+String.valueOf(i1)+String.valueOf(i);
     }
+
+    public void openUpdateDialogue(final String str)
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Enter list Name");
+
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT );
+        builder.setView(input);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                m_Text = input.getText().toString();
+                if(m_Text.equals(""))
+                    return;
+                if(arr.contains(m_Text))
+                    Toast.makeText(getApplicationContext(),"name already exists",Toast.LENGTH_SHORT).show();
+                else {
+                    mydb=new databaseHelper(getApplicationContext());
+                    mydb.updateTasks(m_Text,str);
+                    Intent intent = getIntent();
+                    overridePendingTransition(0, 0);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                    finish();
+                    overridePendingTransition(0, 0);
+                    startActivity(intent);
+                }
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+                Toast.makeText(getApplicationContext(),"Canceled by user", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        builder.show();
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater n=getMenuInflater();
+        n.inflate(R.menu.item_menu,menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info= (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        switch (item.getItemId())
+        {
+            case R.id.update:
+                String str = arr.get(info.position);
+                openUpdateDialogue(str);
+                aa.notifyDataSetChanged();
+            case R.id.updateDueDate:
+                //update due date
+        }
+        return super.onContextItemSelected(item);
+    }
 }
+
