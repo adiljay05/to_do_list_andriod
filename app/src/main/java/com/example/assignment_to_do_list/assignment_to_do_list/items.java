@@ -2,6 +2,7 @@ package com.example.assignment_to_do_list.assignment_to_do_list;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -12,20 +13,24 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
-public class items extends Activity {
+public class items extends Activity implements DatePickerDialog.OnDateSetListener{
 
     public databaseHelper mydb;
     public String m_Text = "";
+    String date="";
     ArrayList<Integer> ids=new ArrayList<>();
     ArrayList<String> arr=new ArrayList<>();
     ArrayList<Integer> checkedItems=new ArrayList<>();
+    ArrayList<String> date1=new ArrayList<>();
     public String d;
     public int id;
     @Override
@@ -59,6 +64,7 @@ public class items extends Activity {
                 arr.add(data.getString(2));
                 ids.add(Integer.valueOf(data.getString(0)));
                 checkedItems.add(Integer.valueOf(data.getString(3)));
+                date1.add(data.getString(4));
             }
             Toast.makeText(this,arr.toString(),Toast.LENGTH_SHORT).show();
         }
@@ -137,13 +143,20 @@ public class items extends Activity {
                 if(m_Text=="")
                     return;
                 //Toast.makeText(getApplicationContext(), m_Text, Toast.LENGTH_SHORT).show();
+                    DatePickerDialog datePickerDialog = new DatePickerDialog(
+                            items.this,
+                            items.this,
+                            Calendar.getInstance().get(Calendar.YEAR),
+                            Calendar.getInstance().get(Calendar.MONTH),
+                            Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
+                    datePickerDialog.show();
                 mydb=new databaseHelper(getApplicationContext());
                 int id1=mydb.getID(d);
                 //Toast.makeText(getApplicationContext(),id.toString(),Toast.LENGTH_SHORT).show();
                 if(id1==-1){
                     Toast.makeText(getApplicationContext(),"No id found",Toast.LENGTH_SHORT).show();
                 }
-                Boolean n=mydb.insertTask(m_Text,id1);
+                Boolean n=mydb.insertTask(m_Text,id1,date);
                 if(n){
                     Toast.makeText(getApplicationContext(),"Data Inserted",Toast.LENGTH_SHORT).show();
                 }
@@ -162,5 +175,10 @@ public class items extends Activity {
         });
 
         builder.show();
+    }
+
+    @Override
+    public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
+        date= String.valueOf(i2)+String.valueOf(i1)+String.valueOf(i);
     }
 }

@@ -5,16 +5,12 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
         <Button
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:text="Add new List"
             android:id="@+id/newItemButton"
-            />
+            tools:ignore="HardcodedText" />
         <ListView
             android:layout_width="match_parent"
             android:layout_height="match_parent"

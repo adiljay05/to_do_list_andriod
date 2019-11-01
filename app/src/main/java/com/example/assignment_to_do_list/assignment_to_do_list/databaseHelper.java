@@ -29,7 +29,7 @@ public class databaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL("create table "+TABLE_NAME +" (ID INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT)");
-        sqLiteDatabase.execSQL("create table "+TABLE2_NAME+"(ID INTEGER PRIMARY KEY AUTOINCREMENT, dataID INTEGER, description TEXT, isCompleted INTEGER,FOREIGN KEY(dataID) REFERENCES data(ID))");
+        sqLiteDatabase.execSQL("create table "+TABLE2_NAME+"(ID INTEGER PRIMARY KEY AUTOINCREMENT, dataID INTEGER, description TEXT, isCompleted INTEGER,dueDate TEXT,FOREIGN KEY(dataID) REFERENCES data(ID))");
 
     }
 
@@ -49,12 +49,13 @@ public class databaseHelper extends SQLiteOpenHelper {
     }
 
 
-    Boolean insertTask(String name,int id) {
+    Boolean insertTask(String name,int id,String date) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("description",name);
         contentValues.put("dataID",id);
         contentValues.put("isCompleted",0);
+        contentValues.put("dueDate",date);
         long result1 = db.insert(TABLE2_NAME,null ,contentValues);
         if (result1 != -1) return true;
         else return false;
