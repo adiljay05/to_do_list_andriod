@@ -70,9 +70,12 @@ public class moveApplications extends Activity {
                     Toast.makeText(getApplicationContext(),"Moved",Toast.LENGTH_SHORT).show();
                     Intent in=new Intent(getApplicationContext(),items.class);
                     in.putExtra("name",newList);
-
-                    startActivity(in);
+                    overridePendingTransition(0, 0);
+                    in.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                     finish();
+                    overridePendingTransition(0, 0);
+                    startActivity(in);
+
                 }
                 else
                 {

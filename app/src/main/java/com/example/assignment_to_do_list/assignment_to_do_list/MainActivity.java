@@ -8,7 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.provider.Contacts;
 import android.text.InputType;
 import android.view.ContextMenu;
 import android.view.MenuInflater;
@@ -21,12 +20,13 @@ import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class MainActivity extends Activity {
@@ -35,8 +35,9 @@ public class MainActivity extends Activity {
     public databaseHelper mydb;
     ArrayList<data> array1=new ArrayList<>();
     ArrayList<String> arr=new ArrayList<>();
-    ArrayAdapter<String> aa ;
     CustomAdapter ad;
+    task taskObject=new task();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,8 +53,26 @@ public class MainActivity extends Activity {
         else {
             while (data.moveToNext()) {
                 arr.add(data.getString(1));
+                int idOfCurrentList=mydb.getID(data.getString(1));
+                Cursor task=mydb.getTasks(idOfCurrentList);
+                if(task.getCount()!=0)
+                {
+                    Calendar calendar = Calendar.getInstance();
+                    @SuppressLint("SimpleDateFormat") SimpleDateFormat dmy = new SimpleDateFormat("ddmmyyyy");
+                    String strDate = dmy.format(calendar.getTime());
+                    task.moveToNext();
+                    taskObject.itemid=task.getString(0);
+                    taskObject.dataId=task.getString(1);
+                    taskObject.description=task.getString(2);
+                    taskObject.isCompleted=task.getString(3);
+                    taskObject.dueDate=task.getString(4);
+                    while (task.moveToNext()) {
+                        getSmallestTime(strDate, task.getString(4),task);
+                    }
+                }
                 data obj=new data();
                 obj.name=data.getString(1);
+                obj.time=taskObject.description;
                 array1.add(obj);
             }
         }
@@ -70,10 +89,12 @@ public class MainActivity extends Activity {
         ad=new CustomAdapter(this,array1);
 
         l.setAdapter(ad);
+
         registerForContextMenu(l);
         l.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
             Intent in=new Intent(getApplicationContext(),items.class);
             in.putExtra("name",array1.get(i).name);
 
@@ -83,6 +104,21 @@ public class MainActivity extends Activity {
         });
 
     }
+
+    public void getSmallestTime(String currentTime,String tasktime,Cursor task1)
+    {
+
+        Double t=Double.parseDouble(currentTime);
+        Double t1=Double.parseDouble(tasktime);
+        if(t1>=t && t1<Double.parseDouble(taskObject.dueDate)){
+            taskObject.itemid=task1.getString(0);
+            taskObject.dataId=task1.getString(1);
+            taskObject.description=task1.getString(2);
+            taskObject.isCompleted=task1.getString(3);
+            taskObject.dueDate=task1.getString(4);
+        }
+    }
+
     public void openUpdateDialogue(final String str)
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -96,7 +132,7 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 m_Text = input.getText().toString();
-                if(m_Text=="")
+                if(m_Text.equals(""))
                     return;
                 if(arr.contains(m_Text))
                     Toast.makeText(getApplicationContext(),"name already exists",Toast.LENGTH_SHORT).show();
@@ -136,7 +172,7 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 m_Text = input.getText().toString();
-                if(m_Text=="")
+                if(m_Text.equals(""))
                     return;
                 if(arr.contains(m_Text))
                     Toast.makeText(getApplicationContext(),"name already exists",Toast.LENGTH_SHORT).show();
@@ -201,6 +237,15 @@ class data{
     {
         return time;
     }
+}
+
+class task{
+    public String itemid;
+    public String dataId;
+    public String description;
+    public String isCompleted;
+    public String dueDate;
+
 }
 
 

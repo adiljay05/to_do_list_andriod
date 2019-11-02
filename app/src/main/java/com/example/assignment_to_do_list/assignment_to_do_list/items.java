@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.ClipData;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -41,6 +42,11 @@ public class items extends Activity implements DatePickerDialog.OnDateSetListene
     TextView t,t1;
     public String d;
     public int id;
+    DatePickerDialog datePickerDialog;
+    int year;
+    int month;
+    int dayOfMonth;
+    Calendar calendar;
     public int checkedCounter=0,totalCounter=0;
     @SuppressLint("SetTextI18n")
     @Override
@@ -160,40 +166,42 @@ public class items extends Activity implements DatePickerDialog.OnDateSetListene
                 if(arr.contains(m_Text))
                     Toast.makeText(getApplicationContext(),"name already exists",Toast.LENGTH_SHORT).show();
                 else {
-                    //Toast.makeText(getApplicationContext(), m_Text, Toast.LENGTH_SHORT).show();
-                    DatePickerDialog datePickerDialog = new DatePickerDialog(
-                        items.this,
-                        items.this,
-                        Calendar.getInstance().get(Calendar.YEAR),
-                        Calendar.getInstance().get(Calendar.MONTH),
-                        Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
-                    datePickerDialog.show();
-                    datePickerDialog.setButton(DialogInterface.BUTTON_POSITIVE, "", new DialogInterface.OnClickListener() {
-                        @SuppressLint("SetTextI18n")
-                        public void onClick(DialogInterface dialog, int which) {
-                            if (which == DialogInterface.BUTTON_POSITIVE ){
-                                //Toast.makeText(getApplicationContext(),"Date Selected",Toast.LENGTH_SHORT).show();
+                    calendar = Calendar.getInstance();
+                    year = calendar.get(Calendar.YEAR);
+                    month = calendar.get(Calendar.MONTH);
+                    dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+                    datePickerDialog = new DatePickerDialog(items.this,
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                                date=String.valueOf(day)+String.valueOf(month)+String.valueOf(year);
+                                Toast.makeText(getApplicationContext(),date,Toast.LENGTH_LONG).show();
                                 mydb=new databaseHelper(getApplicationContext());
                                 id1[0] =mydb.getID(d);
                                 //Toast.makeText(getApplicationContext(),id.toString(),Toast.LENGTH_SHORT).show();
                                 if(id1[0] ==-1){
                                     Toast.makeText(getApplicationContext(),"No id found",Toast.LENGTH_SHORT).show();
                                 }
-                                Boolean n=mydb.insertTask(m_Text, id1[0],date);
-                                if(n){
-                                    Toast.makeText(getApplicationContext(),"Data Inserted",Toast.LENGTH_SHORT).show();
-                                }
-                                else{
-                                    Toast.makeText(getApplicationContext(),"Cannot Enter the data",Toast.LENGTH_SHORT).show();
-                                }
-                                arr.add(m_Text);
-                                totalCounter++;
-                                t.setText("Total: "+totalCounter);
-                            }
-                        }
-                    });
-                    //while(date.equals(oldDate)){}
 
+                                if(!date.equals(""))
+                                {
+                                    Boolean n=mydb.insertTask(m_Text, id1[0],date);
+                                    if(n){
+                                         Toast.makeText(getApplicationContext(),"Item added",Toast.LENGTH_SHORT).show();
+                                    }
+                                    else{
+                                        Toast.makeText(getApplicationContext(),"Cannot Enter the data",Toast.LENGTH_SHORT).show();
+                                    }
+                                    arr.add(m_Text);
+                                    totalCounter++;
+                                    t.setText("Total: "+totalCounter);
+                                }
+                            }
+                        }, year, month, dayOfMonth);
+                    datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis());
+                    datePickerDialog.show();
+
+                    //while(date.equals(oldDate)){}
                 }
             }
         });
@@ -254,15 +262,27 @@ public class items extends Activity implements DatePickerDialog.OnDateSetListene
         builder.show();
     }
 
-    public void getNewDate()
+    public void getNewDate(final String str)
     {
-        DatePickerDialog datePickerDialog = new DatePickerDialog(
-                items.this,
-                items.this,
-                Calendar.getInstance().get(Calendar.YEAR),
-                Calendar.getInstance().get(Calendar.MONTH),
-                Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
+        calendar = Calendar.getInstance();
+        year = calendar.get(Calendar.YEAR);
+        month = calendar.get(Calendar.MONTH);
+        dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+        datePickerDialog = new DatePickerDialog(items.this,
+                new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                        date=String.valueOf(day)+String.valueOf(month)+String.valueOf(year);
+                        mydb=new databaseHelper(getApplicationContext());
+                        //Toast.makeText(this,date,Toast.LENGTH_SHORT).show();
+                        mydb.updateDueDate(str,date,d);
+                        mydb.close();
+                        aa.notifyDataSetChanged();
+                    }
+                }, year, month, dayOfMonth);
+
         datePickerDialog.show();
+
     }
 
     @Override
@@ -284,13 +304,10 @@ public class items extends Activity implements DatePickerDialog.OnDateSetListene
                 break;
             case R.id.updateDueDate:
                 //update due date
-                getNewDate();
                 String str1 = arr.get(info.position);
-                mydb=new databaseHelper(getApplicationContext());
-                //Toast.makeText(this,date,Toast.LENGTH_SHORT).show();
-                mydb.updateDueDate(str1,date,d);
-                mydb.close();
-                aa.notifyDataSetChanged();
+                getNewDate(str1);
+
+
                 break;
 
             case R.id.remove:

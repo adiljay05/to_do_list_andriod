@@ -71,14 +71,14 @@ public class databaseHelper extends SQLiteOpenHelper {
     {
         SQLiteDatabase db=this.getWritableDatabase();
         int id=getID(currentList);
-        db.execSQL("update "+TABLE2_NAME+" set description='"+newName+"' where description='"+str+"' and id='"+id+"'");
+        db.execSQL("update "+TABLE2_NAME+" set description='"+newName+"' where description='"+str+"' and ID='"+id+"'");
     }
 
     void updateDueDate(String description,String date,String currentList)
     {
         SQLiteDatabase db=this.getWritableDatabase();
         int id=getID(currentList);
-        db.execSQL("update "+TABLE2_NAME+" set dueDate='"+date+"' where description='"+description+"' and id='"+id+"'");
+        db.execSQL("update "+TABLE2_NAME+" set dueDate='"+date+"' where description='"+description+"' and ID='"+id+"'");
     }
     void removeItem(String description,String listName)
     {
