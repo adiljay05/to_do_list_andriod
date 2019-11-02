@@ -10,7 +10,6 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.InputType;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -18,15 +17,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -39,12 +35,14 @@ public class MainActivity extends Activity {
     ArrayList<String> arr=new ArrayList<>();
     CustomAdapter ad;
     task taskObject=new task();
+    public static task overAllSmallestObject=new task();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Button b=findViewById(R.id.newItemButton);
+
         mydb=new databaseHelper(getApplicationContext());
 
         Cursor data=mydb.getData();
@@ -70,8 +68,10 @@ public class MainActivity extends Activity {
                     taskObject.description=task.getString(2);
                     taskObject.isCompleted=task.getString(3);
                     taskObject.dueDate=task.getString(4);
+                    overAllSmallestObject=taskObject;
                     while (task.moveToNext()) {
                         getSmallestTime(strDate, task.getString(4),task);
+                        getOverAllSmallestTime(task.getString(4),task);
                     }
                 }
                 data obj=new data();
@@ -110,6 +110,17 @@ public class MainActivity extends Activity {
 
     }
 
+    public void getOverAllSmallestTime(String tasktime,Cursor task1)
+    {
+        Double t1=Double.parseDouble(tasktime);
+        if(t1<Double.parseDouble(overAllSmallestObject.dueDate)){
+            overAllSmallestObject.itemid=task1.getString(0);
+            overAllSmallestObject.dataId=task1.getString(1);
+            overAllSmallestObject.description=task1.getString(2);
+            overAllSmallestObject.isCompleted=task1.getString(3);
+            overAllSmallestObject.dueDate=task1.getString(4);
+        }
+    }
     public void getSmallestTime(String currentTime,String tasktime,Cursor task1)
     {
 
@@ -124,6 +135,8 @@ public class MainActivity extends Activity {
         }
     }
 
+
+
     public void openUpdateDialogue(final String str)
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -136,21 +149,21 @@ public class MainActivity extends Activity {
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                m_Text = input.getText().toString();
-                if(m_Text.equals(""))
-                    return;
-                if(arr.contains(m_Text))
-                    Toast.makeText(getApplicationContext(),"name already exists",Toast.LENGTH_SHORT).show();
-                else {
-                    mydb=new databaseHelper(getApplicationContext());
-                    mydb.updateData(m_Text,str);
-                    Intent intent = getIntent();
-                    overridePendingTransition(0, 0);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                    finish();
-                    overridePendingTransition(0, 0);
-                    startActivity(intent);
-                }
+            m_Text = input.getText().toString();
+            if(m_Text.equals(""))
+                return;
+            if(arr.contains(m_Text))
+                Toast.makeText(getApplicationContext(),"name already exists",Toast.LENGTH_SHORT).show();
+            else {
+                mydb=new databaseHelper(getApplicationContext());
+                mydb.updateData(m_Text,str);
+                Intent intent = getIntent();
+                overridePendingTransition(0, 0);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                finish();
+                overridePendingTransition(0, 0);
+                startActivity(intent);
+            }
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -176,27 +189,27 @@ public class MainActivity extends Activity {
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                m_Text = input.getText().toString();
-                if(m_Text.equals(""))
-                    return;
-                if(arr.contains(m_Text))
-                    Toast.makeText(getApplicationContext(),"name already exists",Toast.LENGTH_SHORT).show();
-                else {
-                    Toast.makeText(getApplicationContext(), m_Text, Toast.LENGTH_SHORT).show();
-                    arr.add(m_Text);
-                    data obj=new data();
-                    obj.name=m_Text;
-                    array1.add(obj);
-                    mydb=new databaseHelper(getApplicationContext());
-                    Boolean n=mydb.insertData(m_Text);
-                    if(n)
-                    {
-                        Toast.makeText(getApplicationContext(),"Data Inserted",Toast.LENGTH_SHORT).show();
-                    }
-                    else{
-                        Toast.makeText(getApplicationContext(),"Name Already Exists",Toast.LENGTH_SHORT).show();
-                    }
+            m_Text = input.getText().toString();
+            if(m_Text.equals(""))
+                return;
+            if(arr.contains(m_Text))
+                Toast.makeText(getApplicationContext(),"name already exists",Toast.LENGTH_SHORT).show();
+            else {
+                Toast.makeText(getApplicationContext(), m_Text, Toast.LENGTH_SHORT).show();
+                arr.add(m_Text);
+                data obj=new data();
+                obj.name=m_Text;
+                array1.add(obj);
+                mydb=new databaseHelper(getApplicationContext());
+                Boolean n=mydb.insertData(m_Text);
+                if(n)
+                {
+                    Toast.makeText(getApplicationContext(),"Data Inserted",Toast.LENGTH_SHORT).show();
                 }
+                else{
+                    Toast.makeText(getApplicationContext(),"Name Already Exists",Toast.LENGTH_SHORT).show();
+                }
+            }
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -307,16 +320,16 @@ class CustomAdapter extends BaseAdapter {
             y1=String.valueOf(year);
             m1=String.valueOf(month+1);
             d1=String.valueOf(dayOfMonth);
-            Log.i("Year ",y1);
-            Log.i("Month",m1);
-            Log.i("Day",d1);
+//            Log.i("Year ",y1);
+//            Log.i("Month",m1);
+//            Log.i("Day",d1);
             y2=calculateYear(l.get(position).time);
             m2=calculateMonth(l.get(position).time);
             d2=calculateDay(l.get(position).time);
-            Log.i("Date",l.get(position).time);
-            Log.i("Year ",y2);
-            Log.i("Month",m2);
-            Log.i("Day",d2);
+//            Log.i("Date",l.get(position).time);
+//            Log.i("Year ",y2);
+//            Log.i("Month",m2);
+//            Log.i("Day",d2);
 
             if(y1.equals(y2) && m1.equals(m2) && d1.equals(d2))
                 view.setBackgroundColor(Color.YELLOW);
@@ -327,10 +340,11 @@ class CustomAdapter extends BaseAdapter {
             m1=String.valueOf(month+1);
             d1=String.valueOf(dayOfMonth);
             Double currentTime=Double.parseDouble(d1+m1+y1);
-            Double selectedTime=Double.parseDouble(l.get(position).time);
+            Double selectedTime=Double.parseDouble(MainActivity.overAllSmallestObject.dueDate);
             if(selectedTime<currentTime)
                 view.setBackgroundColor(Color.RED);
         }
+
         view.setTag(l.get(position).name);
         return view;
     }

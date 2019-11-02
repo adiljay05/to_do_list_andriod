@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.content.ClipData;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -24,7 +23,6 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -114,8 +112,7 @@ public class items extends Activity implements DatePickerDialog.OnDateSetListene
 
         ListView l=findViewById(R.id.listView);
 
-        aa = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_multiple_choice, arr);
+        aa = new ArrayAdapter<>(this,android.R.layout.simple_list_item_multiple_choice, arr);
         l.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
         registerForContextMenu(l);
 
@@ -137,16 +134,16 @@ public class items extends Activity implements DatePickerDialog.OnDateSetListene
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-                checkedCounter++;
-                totalCounter++;
-                mydb.updateTask(aa.getItem(i));
-                Intent intent = getIntent();
-                overridePendingTransition(0, 0);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                finish();
-                overridePendingTransition(0, 0);
-                startActivity(intent);
-                //Toast.makeText(getApplicationContext(),checkedItems.get(i),Toast.LENGTH_SHORT).show();
+            checkedCounter++;
+            totalCounter++;
+            mydb.updateTask(aa.getItem(i));
+            Intent intent = getIntent();
+            overridePendingTransition(0, 0);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            finish();
+            overridePendingTransition(0, 0);
+            startActivity(intent);
+            //Toast.makeText(getApplicationContext(),checkedItems.get(i),Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -199,10 +196,7 @@ public class items extends Activity implements DatePickerDialog.OnDateSetListene
                                 }
                             }
                         }, year, month, dayOfMonth);
-                    datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis());
                     datePickerDialog.show();
-
-                    //while(date.equals(oldDate)){}
                 }
             }
         });
@@ -234,22 +228,22 @@ public class items extends Activity implements DatePickerDialog.OnDateSetListene
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                m_Text = input.getText().toString();
-                if(m_Text.equals(""))
-                    return;
-                if(arr.contains(m_Text))
-                    Toast.makeText(getApplicationContext(),"name already exists",Toast.LENGTH_SHORT).show();
-                else {
-                    mydb=new databaseHelper(getApplicationContext());
-                    mydb.updateTasks(m_Text,str,d);
-                    mydb.close();
-                    Intent intent = getIntent();
-                    overridePendingTransition(0, 0);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                    finish();
-                    overridePendingTransition(0, 0);
-                    startActivity(intent);
-                }
+            m_Text = input.getText().toString();
+            if(m_Text.equals(""))
+                return;
+            if(arr.contains(m_Text))
+                Toast.makeText(getApplicationContext(),"name already exists",Toast.LENGTH_SHORT).show();
+            else {
+                mydb=new databaseHelper(getApplicationContext());
+                mydb.updateTasks(m_Text,str,d);
+                mydb.close();
+                Intent intent = getIntent();
+                overridePendingTransition(0, 0);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                finish();
+                overridePendingTransition(0, 0);
+                startActivity(intent);
+            }
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -270,18 +264,17 @@ public class items extends Activity implements DatePickerDialog.OnDateSetListene
         month = calendar.get(Calendar.MONTH);
         dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
         datePickerDialog = new DatePickerDialog(items.this,
-                new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                        date=String.valueOf(day)+String.valueOf(month+1)+String.valueOf(year);
-                        mydb=new databaseHelper(getApplicationContext());
-                        //Toast.makeText(this,date,Toast.LENGTH_SHORT).show();
-                        mydb.updateDueDate(str,date,d);
-                        mydb.close();
-                        aa.notifyDataSetChanged();
-                    }
-                }, year, month, dayOfMonth);
-
+            new DatePickerDialog.OnDateSetListener() {
+                @Override
+                public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                    date=String.valueOf(day)+String.valueOf(month+1)+String.valueOf(year);
+                    mydb=new databaseHelper(getApplicationContext());
+                    //Toast.makeText(this,date,Toast.LENGTH_SHORT).show();
+                    mydb.updateDueDate(str,date,d);
+                    mydb.close();
+                    aa.notifyDataSetChanged();
+                }
+            }, year, month, dayOfMonth);
         datePickerDialog.show();
 
     }
