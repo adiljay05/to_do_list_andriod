@@ -1,39 +1,42 @@
 package com.example.assignment_to_do_list.assignment_to_do_list;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.provider.Contacts;
 import android.text.InputType;
 import android.view.ContextMenu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-import java.util.Calendar;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends Activity {
 
     public String m_Text = "";
     public databaseHelper mydb;
+    ArrayList<data> array1=new ArrayList<>();
     ArrayList<String> arr=new ArrayList<>();
     ArrayAdapter<String> aa ;
+    CustomAdapter ad;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,7 +52,9 @@ public class MainActivity extends Activity {
         else {
             while (data.moveToNext()) {
                 arr.add(data.getString(1));
-
+                data obj=new data();
+                obj.name=data.getString(1);
+                array1.add(obj);
             }
         }
 
@@ -61,18 +66,19 @@ public class MainActivity extends Activity {
         });
         mydb =new databaseHelper(this);
         ListView l=findViewById(R.id.listView);
-        aa= new ArrayAdapter<>(this,android.R.layout.simple_list_item_1, arr);
+        //aa= new ArrayAdapter<>(this,android.R.layout.simple_list_item_1, arr);
+        ad=new CustomAdapter(this,array1);
 
-        l.setAdapter(aa);
+        l.setAdapter(ad);
         registerForContextMenu(l);
         l.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
             Intent in=new Intent(getApplicationContext(),items.class);
-            in.putExtra("name",aa.getItem(i));
+            in.putExtra("name",array1.get(i).name);
 
             startActivity(in);
-            Toast.makeText(getApplicationContext(),aa.getItem(i),Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(),aa.getItem(i),Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -137,6 +143,9 @@ public class MainActivity extends Activity {
                 else {
                     Toast.makeText(getApplicationContext(), m_Text, Toast.LENGTH_SHORT).show();
                     arr.add(m_Text);
+                    data obj=new data();
+                    obj.name=m_Text;
+                    array1.add(obj);
                     mydb=new databaseHelper(getApplicationContext());
                     Boolean n=mydb.insertData(m_Text);
                     if(n)
@@ -175,8 +184,63 @@ public class MainActivity extends Activity {
             case R.id.update:
                 String str = arr.get(info.position);
                 openUpdateDialogue(str);
-                aa.notifyDataSetChanged();
+                ad.notifyDataSetChanged();
         }
         return super.onContextItemSelected(item);
     }
 }
+
+class data{
+    public String name;
+    public String time;
+    public String getName()
+    {
+        return name;
+    }
+    public String getTime()
+    {
+        return time;
+    }
+}
+
+
+class CustomAdapter extends BaseAdapter {
+    Context con;
+    List<data> l;
+
+    public CustomAdapter (Context con, List<data> mContact) {
+        this.con = con;
+        this.l = mContact;
+    }
+
+    @Override
+    public int getCount() {
+        return l.size();
+    }
+
+    @Override
+    public Object getItem(int position) {
+        return l.get(position);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        @SuppressLint("ViewHolder") View view=View.inflate(con,R.layout.list_items_main,null);
+        TextView t1= view.findViewById(R.id.main);
+        TextView t2= view.findViewById(R.id.subItem);
+        t1.setText(l.get(position).name);
+        t2.setText(l.get(position).time);
+
+        view.setTag(l.get(position).name);
+        return view;
+    }
+
+}
+
+

@@ -32,9 +32,7 @@
         android:layout_below="@id/newItemButton"
         android:clickable="true"
         android:choiceMode="singleChoice"
-        >
-
-    </ListView>
+        />
 
 
 </RelativeLayout>
