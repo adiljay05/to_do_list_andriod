@@ -53,7 +53,7 @@ public class moveApplications extends Activity {
                 mydb=new databaseHelper(getApplicationContext());
                 Cursor data=mydb.getTasks(mydb.getID(newList));
                 if(data.getCount() == 0) {
-                    //Toast.makeText(this,"empty database",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),"empty database",Toast.LENGTH_SHORT).show();
                     //return;
                 }
                 else {
@@ -62,8 +62,9 @@ public class moveApplications extends Activity {
                         //ids.add(Integer.valueOf(data.getString(0)));
                     }
                 }
-                Toast.makeText(getApplicationContext(),newListData.toString(),Toast.LENGTH_SHORT).show();
-                if(!newListData.contains(newList))
+                //Toast.makeText(getApplicationContext(),item,Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(),newListData.toString(),Toast.LENGTH_SHORT).show();
+                if(!newListData.contains(item))
                 {
                     mydb.moveItem(newList,item);
                     Toast.makeText(getApplicationContext(),"Moved",Toast.LENGTH_SHORT).show();
@@ -71,6 +72,7 @@ public class moveApplications extends Activity {
                     in.putExtra("name",newList);
 
                     startActivity(in);
+                    finish();
                 }
                 else
                 {

@@ -67,21 +67,24 @@ public class databaseHelper extends SQLiteOpenHelper {
         db.execSQL("update "+TABLE_NAME+" set Name='"+newName+"' where Name='"+str+"'");
     }
 
-    void updateTasks(String newName,String str)
+    void updateTasks(String newName,String str,String currentList)
     {
         SQLiteDatabase db=this.getWritableDatabase();
-        db.execSQL("update "+TABLE2_NAME+" set description='"+newName+"' where description='"+str+"'");
+        int id=getID(currentList);
+        db.execSQL("update "+TABLE2_NAME+" set description='"+newName+"' where description='"+str+"' and id='"+id+"'");
     }
 
-    void updateDueDate(String description,String date)
+    void updateDueDate(String description,String date,String currentList)
     {
         SQLiteDatabase db=this.getWritableDatabase();
-        db.execSQL("update "+TABLE2_NAME+" set dueDate='"+date+"' where description='"+description+"'");
+        int id=getID(currentList);
+        db.execSQL("update "+TABLE2_NAME+" set dueDate='"+date+"' where description='"+description+"' and id='"+id+"'");
     }
-    void removeItem(String description)
+    void removeItem(String description,String listName)
     {
         SQLiteDatabase db=this.getWritableDatabase();
-        db.execSQL("delete from "+TABLE2_NAME+" WHERE description='"+description+"'");
+        int id=getID(listName);
+        db.execSQL("delete from "+TABLE2_NAME+" WHERE description='"+description+"' and dataID='"+id+"'");
     }
     int updateTask(String name)
     {

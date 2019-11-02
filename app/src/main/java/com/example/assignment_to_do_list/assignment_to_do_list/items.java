@@ -14,6 +14,7 @@ import android.view.ContextMenu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -109,7 +110,7 @@ public class items extends Activity implements DatePickerDialog.OnDateSetListene
 
         aa = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_multiple_choice, arr);
-        l.setChoiceMode(l.CHOICE_MODE_MULTIPLE);
+        l.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
         registerForContextMenu(l);
         l.setItemsCanFocus(false);
         l.setAdapter(aa);
@@ -138,7 +139,6 @@ public class items extends Activity implements DatePickerDialog.OnDateSetListene
                 finish();
                 overridePendingTransition(0, 0);
                 startActivity(intent);
-
                 //Toast.makeText(getApplicationContext(),checkedItems.get(i),Toast.LENGTH_SHORT).show();
             }
         });
@@ -157,40 +157,44 @@ public class items extends Activity implements DatePickerDialog.OnDateSetListene
                 m_Text = input.getText().toString();
                 if(m_Text.equals(""))
                     return;
-                //Toast.makeText(getApplicationContext(), m_Text, Toast.LENGTH_SHORT).show();
-                DatePickerDialog datePickerDialog = new DatePickerDialog(
-                    items.this,
-                    items.this,
-                    Calendar.getInstance().get(Calendar.YEAR),
-                    Calendar.getInstance().get(Calendar.MONTH),
-                    Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
-                datePickerDialog.show();
-                datePickerDialog.setButton(DialogInterface.BUTTON_POSITIVE, "", new DialogInterface.OnClickListener() {
-                    @SuppressLint("SetTextI18n")
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (which == DialogInterface.BUTTON_POSITIVE ){
-                            //Toast.makeText(getApplicationContext(),"Date Selected",Toast.LENGTH_SHORT).show();
-                            mydb=new databaseHelper(getApplicationContext());
-                            id1[0] =mydb.getID(d);
-                            //Toast.makeText(getApplicationContext(),id.toString(),Toast.LENGTH_SHORT).show();
-                            if(id1[0] ==-1){
-                                Toast.makeText(getApplicationContext(),"No id found",Toast.LENGTH_SHORT).show();
+                if(arr.contains(m_Text))
+                    Toast.makeText(getApplicationContext(),"name already exists",Toast.LENGTH_SHORT).show();
+                else {
+                    //Toast.makeText(getApplicationContext(), m_Text, Toast.LENGTH_SHORT).show();
+                    DatePickerDialog datePickerDialog = new DatePickerDialog(
+                        items.this,
+                        items.this,
+                        Calendar.getInstance().get(Calendar.YEAR),
+                        Calendar.getInstance().get(Calendar.MONTH),
+                        Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
+                    datePickerDialog.show();
+                    datePickerDialog.setButton(DialogInterface.BUTTON_POSITIVE, "", new DialogInterface.OnClickListener() {
+                        @SuppressLint("SetTextI18n")
+                        public void onClick(DialogInterface dialog, int which) {
+                            if (which == DialogInterface.BUTTON_POSITIVE ){
+                                //Toast.makeText(getApplicationContext(),"Date Selected",Toast.LENGTH_SHORT).show();
+                                mydb=new databaseHelper(getApplicationContext());
+                                id1[0] =mydb.getID(d);
+                                //Toast.makeText(getApplicationContext(),id.toString(),Toast.LENGTH_SHORT).show();
+                                if(id1[0] ==-1){
+                                    Toast.makeText(getApplicationContext(),"No id found",Toast.LENGTH_SHORT).show();
+                                }
+                                Boolean n=mydb.insertTask(m_Text, id1[0],date);
+                                if(n){
+                                    Toast.makeText(getApplicationContext(),"Data Inserted",Toast.LENGTH_SHORT).show();
+                                }
+                                else{
+                                    Toast.makeText(getApplicationContext(),"Cannot Enter the data",Toast.LENGTH_SHORT).show();
+                                }
+                                arr.add(m_Text);
+                                totalCounter++;
+                                t.setText("Total: "+totalCounter);
                             }
-                            Boolean n=mydb.insertTask(m_Text, id1[0],date);
-                            if(n){
-                                Toast.makeText(getApplicationContext(),"Data Inserted",Toast.LENGTH_SHORT).show();
-                            }
-                            else{
-                                Toast.makeText(getApplicationContext(),"Cannot Enter the data",Toast.LENGTH_SHORT).show();
-                            }
-                            arr.add(m_Text);
-                            totalCounter++;
-                            t.setText("Total: "+totalCounter);
                         }
-                    }
-                });
-                //while(date.equals(oldDate)){}
+                    });
+                    //while(date.equals(oldDate)){}
 
+                }
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -228,7 +232,7 @@ public class items extends Activity implements DatePickerDialog.OnDateSetListene
                     Toast.makeText(getApplicationContext(),"name already exists",Toast.LENGTH_SHORT).show();
                 else {
                     mydb=new databaseHelper(getApplicationContext());
-                    mydb.updateTasks(m_Text,str);
+                    mydb.updateTasks(m_Text,str,d);
                     mydb.close();
                     Intent intent = getIntent();
                     overridePendingTransition(0, 0);
@@ -284,7 +288,7 @@ public class items extends Activity implements DatePickerDialog.OnDateSetListene
                 String str1 = arr.get(info.position);
                 mydb=new databaseHelper(getApplicationContext());
                 //Toast.makeText(this,date,Toast.LENGTH_SHORT).show();
-                mydb.updateDueDate(str1,date);
+                mydb.updateDueDate(str1,date,d);
                 mydb.close();
                 aa.notifyDataSetChanged();
                 break;
@@ -293,7 +297,7 @@ public class items extends Activity implements DatePickerDialog.OnDateSetListene
                 String str2 = arr.get(info.position);
                 mydb=new databaseHelper(getApplicationContext());
                 arr.remove(info.position);
-                mydb.removeItem(str2);
+                mydb.removeItem(str2,d);
                 mydb.close();
                 aa.notifyDataSetChanged();
                 break;
