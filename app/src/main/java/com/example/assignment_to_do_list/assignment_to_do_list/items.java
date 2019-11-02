@@ -118,6 +118,7 @@ public class items extends Activity implements DatePickerDialog.OnDateSetListene
                 android.R.layout.simple_list_item_multiple_choice, arr);
         l.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
         registerForContextMenu(l);
+
         l.setItemsCanFocus(false);
         l.setAdapter(aa);
         for(int i=0;i<checkedItems.size();i++)
@@ -174,7 +175,7 @@ public class items extends Activity implements DatePickerDialog.OnDateSetListene
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
                             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                                date=String.valueOf(day)+String.valueOf(month)+String.valueOf(year);
+                                date=String.valueOf(day)+String.valueOf(month+1)+String.valueOf(year);
                                 Toast.makeText(getApplicationContext(),date,Toast.LENGTH_LONG).show();
                                 mydb=new databaseHelper(getApplicationContext());
                                 id1[0] =mydb.getID(d);
@@ -272,7 +273,7 @@ public class items extends Activity implements DatePickerDialog.OnDateSetListene
                 new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                        date=String.valueOf(day)+String.valueOf(month)+String.valueOf(year);
+                        date=String.valueOf(day)+String.valueOf(month+1)+String.valueOf(year);
                         mydb=new databaseHelper(getApplicationContext());
                         //Toast.makeText(this,date,Toast.LENGTH_SHORT).show();
                         mydb.updateDueDate(str,date,d);

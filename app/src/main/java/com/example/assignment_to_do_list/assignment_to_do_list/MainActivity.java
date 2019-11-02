@@ -7,8 +7,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -58,8 +60,10 @@ public class MainActivity extends Activity {
                 if(task.getCount()!=0)
                 {
                     Calendar calendar = Calendar.getInstance();
-                    @SuppressLint("SimpleDateFormat") SimpleDateFormat dmy = new SimpleDateFormat("ddmmyyyy");
-                    String strDate = dmy.format(calendar.getTime());
+                    int year = calendar.get(Calendar.YEAR);
+                    int month = calendar.get(Calendar.MONTH);
+                    int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+                    String strDate = dayOfMonth+""+month+""+year;
                     task.moveToNext();
                     taskObject.itemid=task.getString(0);
                     taskObject.dataId=task.getString(1);
@@ -72,7 +76,8 @@ public class MainActivity extends Activity {
                 }
                 data obj=new data();
                 obj.name=data.getString(1);
-                obj.time=taskObject.description;
+                obj.itemName=taskObject.description;
+                obj.time=taskObject.dueDate;
                 array1.add(obj);
             }
         }
@@ -228,15 +233,8 @@ public class MainActivity extends Activity {
 
 class data{
     public String name;
+    public String itemName;
     public String time;
-    public String getName()
-    {
-        return name;
-    }
-    public String getTime()
-    {
-        return time;
-    }
 }
 
 class task{
@@ -273,15 +271,66 @@ class CustomAdapter extends BaseAdapter {
         return position;
     }
 
-
+    public String calculateYear(String strDate)
+    {
+        return String.valueOf(strDate.charAt(strDate.length()-4))+String.valueOf(strDate.charAt(strDate.length()-3))+
+                String.valueOf(strDate.charAt(strDate.length()-2))+String.valueOf(strDate.charAt(strDate.length()-1));
+    }
+    public String calculateMonth(String strDate)
+    {
+        return String.valueOf(strDate.charAt(strDate.length()-6))+String.valueOf(strDate.charAt(strDate.length()-5));
+    }
+    public String calculateDay(String strDate)
+    {
+        if(strDate.length()==8)
+        {
+            return String.valueOf(strDate.charAt(strDate.length()-8))+ String.valueOf(strDate.charAt(strDate.length()-7));
+        }
+        else {
+            return String.valueOf(strDate.charAt(strDate.length()-7));
+        }
+    }
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         @SuppressLint("ViewHolder") View view=View.inflate(con,R.layout.list_items_main,null);
         TextView t1= view.findViewById(R.id.main);
         TextView t2= view.findViewById(R.id.subItem);
         t1.setText(l.get(position).name);
-        t2.setText(l.get(position).time);
+        t2.setText(l.get(position).itemName);
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+        String y1,m1,d1,y2,m2,d2;
+        if(l.get(position).time!=null)
+        {
+            y1=String.valueOf(year);
+            m1=String.valueOf(month+1);
+            d1=String.valueOf(dayOfMonth);
+            Log.i("Year ",y1);
+            Log.i("Month",m1);
+            Log.i("Day",d1);
+            y2=calculateYear(l.get(position).time);
+            m2=calculateMonth(l.get(position).time);
+            d2=calculateDay(l.get(position).time);
+            Log.i("Date",l.get(position).time);
+            Log.i("Year ",y2);
+            Log.i("Month",m2);
+            Log.i("Day",d2);
 
+            if(y1.equals(y2) && m1.equals(m2) && d1.equals(d2))
+                view.setBackgroundColor(Color.YELLOW);
+        }
+        if(l.get(position).time!=null)
+        {
+            y1=String.valueOf(year);
+            m1=String.valueOf(month+1);
+            d1=String.valueOf(dayOfMonth);
+            Double currentTime=Double.parseDouble(d1+m1+y1);
+            Double selectedTime=Double.parseDouble(l.get(position).time);
+            if(selectedTime<currentTime)
+                view.setBackgroundColor(Color.RED);
+        }
         view.setTag(l.get(position).name);
         return view;
     }
