@@ -72,15 +72,18 @@ public class MainActivity extends Activity {
                     int month = calendar.get(Calendar.MONTH);
                     int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
                     String strDate = dayOfMonth+""+month+""+year;
-                    task.moveToNext();
-                    taskObject.itemid=task.getString(0);
-                    taskObject.dataId=task.getString(1);
-                    taskObject.description=task.getString(2);
-                    taskObject.isCompleted=task.getString(3);
-                    taskObject.dueDate=task.getString(4);
-                    taskObject.lowestTime=task.getString(4);
-                    taskObject.lowestName="Nill";
 
+                    while(task.moveToNext()) {
+                        taskObject.itemid = task.getString(0);
+                        taskObject.dataId = task.getString(1);
+                        taskObject.description = task.getString(2);
+                        taskObject.isCompleted = task.getString(3);
+                        taskObject.dueDate = task.getString(4);
+                        taskObject.lowestTime = task.getString(4);
+                        taskObject.lowestName = "Nill";
+                        if(taskObject.isCompleted.equals("0"))
+                            break;
+                    }
                     while (task.moveToNext()) {
                         getSmallestTime(strDate, task.getString(4),task);
                         getOverAllSmallestTime(task.getString(4),task);
@@ -144,6 +147,7 @@ public class MainActivity extends Activity {
         Double t=Double.parseDouble(currentTime);
         Double t1=Double.parseDouble(tasktime);
         if(t1>=t && t1<Double.parseDouble(taskObject.dueDate) && task1.getString(3).equals("0")){
+            Log.i("Complete status",task1.getString(3));
             taskObject.itemid=task1.getString(0);
             taskObject.dataId=task1.getString(1);
             taskObject.description=task1.getString(2);
@@ -345,19 +349,19 @@ class CustomAdapter extends BaseAdapter {
             y1=String.valueOf(year);
             m1=String.valueOf(month+1);
             d1=String.valueOf(dayOfMonth);
-            Log.i("Year ",y1);
-            Log.i("Month",m1);
-            Log.i("Day",d1);
+//            Log.i("Year ",y1);
+//            Log.i("Month",m1);
+//            Log.i("Day",d1);
             if(!l.get(position).time.equals(""))
             {
                 y2=calculateYear(l.get(position).time);
                 m2=calculateMonth(l.get(position).time);
                 d2=calculateDay(l.get(position).time);
             }
-            Log.i("Date",l.get(position).time);
-            Log.i("Year ",y2);
-            Log.i("Month",m2);
-            Log.i("Day",d2);
+//            Log.i("Date",l.get(position).time);
+//            Log.i("Year ",y2);
+//            Log.i("Month",m2);
+//            Log.i("Day",d2);
 
             if(y1.equals(y2) && m1.equals(m2) && d1.equals(d2))
                 view.setBackgroundColor(Color.YELLOW);
@@ -371,7 +375,7 @@ class CustomAdapter extends BaseAdapter {
                 d1=String.valueOf(dayOfMonth);
                 Double selectedTime;
                 Double currentTime=Double.parseDouble(d1+m1+y1);
-                Log.i("newDate",currentTime.toString());
+//                Log.i("newDate",currentTime.toString());
                 if(!l.get(position).lowestTimeEver.equals("")) {
                     selectedTime = Double.parseDouble(l.get(position).lowestTimeEver);
                     if (selectedTime < currentTime)
