@@ -8,7 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.text.InputType;
 import android.view.ContextMenu;
 import android.view.MenuInflater;
@@ -26,8 +25,8 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class items extends Activity implements DatePickerDialog.OnDateSetListener{
-
+public class items extends Activity implements DatePickerDialog.OnDateSetListener
+{
     public databaseHelper mydb;
     public String m_Text = "";
     String date="";
@@ -48,9 +47,22 @@ public class items extends Activity implements DatePickerDialog.OnDateSetListene
     public int checkedCounter=0,totalCounter=0;
     @SuppressLint("SetTextI18n")
     @Override
+    public void onBackPressed()
+    {
+        Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+        overridePendingTransition(0, 0);
+        intent.putExtra("check","yes");
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+
+        overridePendingTransition(0, 0);
+        startActivity(intent);
+        finish();
+    }
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_items);
+        overridePendingTransition(0,0);
         d= getIntent().getStringExtra("name");
         mydb=new databaseHelper(getApplicationContext());
         //id=mydb.getID("jawad");
@@ -140,17 +152,18 @@ public class items extends Activity implements DatePickerDialog.OnDateSetListene
             Intent intent = getIntent();
             overridePendingTransition(0, 0);
             intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-            finish();
             overridePendingTransition(0, 0);
             startActivity(intent);
+            finish();
             //Toast.makeText(getApplicationContext(),checkedItems.get(i),Toast.LENGTH_SHORT).show();
             }
         });
     }
+    
     public void openDialogue()
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Enter list Name");
+        builder.setTitle("Enter Item Name");
         final EditText input = new EditText(this);
         input.setInputType(InputType.TYPE_CLASS_TEXT );
         final int[] id1 = new int[1];
@@ -170,6 +183,7 @@ public class items extends Activity implements DatePickerDialog.OnDateSetListene
                     dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
                     datePickerDialog = new DatePickerDialog(items.this,
                         new DatePickerDialog.OnDateSetListener() {
+                            @SuppressLint("SetTextI18n")
                             @Override
                             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                                 date=String.valueOf(day)+String.valueOf(month+1)+String.valueOf(year);
@@ -240,9 +254,10 @@ public class items extends Activity implements DatePickerDialog.OnDateSetListene
                 Intent intent = getIntent();
                 overridePendingTransition(0, 0);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                finish();
+
                 overridePendingTransition(0, 0);
                 startActivity(intent);
+                finish();
             }
             }
         });
@@ -287,21 +302,23 @@ public class items extends Activity implements DatePickerDialog.OnDateSetListene
     }
 
     @Override
-    public boolean onContextItemSelected(@NonNull MenuItem item) {
+    public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info= (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         switch (item.getItemId())
         {
             case R.id.update:
                 String str = arr.get(info.position);
                 openUpdateDialogue(str);
+                arr.set(info.position,m_Text);
                 aa.notifyDataSetChanged();
                 break;
             case R.id.updateDueDate:
                 //update due date
                 String str1 = arr.get(info.position);
                 getNewDate(str1);
-
-
+                mydb=new databaseHelper(getApplicationContext());
+                mydb.updateDueDate(arr.get(info.position),date,d);
+                aa.notifyDataSetChanged();
                 break;
 
             case R.id.remove:

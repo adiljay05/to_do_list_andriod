@@ -25,8 +25,8 @@ public class databaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS"+TABLE_NAME);
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS"+TABLE2_NAME);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS "+TABLE_NAME);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS "+TABLE2_NAME);
         onCreate(sqLiteDatabase);
     }
 
@@ -60,14 +60,14 @@ public class databaseHelper extends SQLiteOpenHelper {
     {
         SQLiteDatabase db=this.getWritableDatabase();
         int id=getID(currentList);
-        db.execSQL("update "+TABLE2_NAME+" set description='"+newName+"' where description='"+str+"' and ID='"+id+"'");
+        db.execSQL("update "+TABLE2_NAME+" set description='"+newName+"' where description='"+str+"' and dataID='"+id+"'");
     }
 
     void updateDueDate(String description,String date,String currentList)
     {
         SQLiteDatabase db=this.getWritableDatabase();
         int id=getID(currentList);
-        db.execSQL("update "+TABLE2_NAME+" set dueDate='"+date+"' where description='"+description+"' and ID='"+id+"'");
+        db.execSQL("update "+TABLE2_NAME+" set dueDate='"+date+"' where description='"+description+"' and dataID='"+id+"'");
     }
     void removeItem(String description,String listName)
     {

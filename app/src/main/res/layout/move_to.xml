@@ -4,12 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="10dp"
+    android:background="@drawable/border"
     tools:context=".moveApplications">
 
 
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@drawable/border"
         android:id="@+id/listView"
         />
 
