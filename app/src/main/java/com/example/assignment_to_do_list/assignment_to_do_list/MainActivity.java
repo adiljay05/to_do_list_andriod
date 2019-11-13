@@ -37,6 +37,25 @@ public class MainActivity extends Activity {
     CustomAdapter ad;
     task taskObject=new task();
 
+    public String calculateYear(String strDate)
+    {
+        return String.valueOf(strDate.charAt(strDate.length()-4))+String.valueOf(strDate.charAt(strDate.length()-3))+
+                String.valueOf(strDate.charAt(strDate.length()-2))+String.valueOf(strDate.charAt(strDate.length()-1));
+    }
+    public String calculateMonth(String strDate)
+    {
+        return String.valueOf(strDate.charAt(strDate.length()-6))+String.valueOf(strDate.charAt(strDate.length()-5));
+    }
+    public String calculateDay(String strDate)
+    {
+        if(strDate.length()==8)
+        {
+            return String.valueOf(strDate.charAt(strDate.length()-8))+ String.valueOf(strDate.charAt(strDate.length()-7));
+        }
+        else {
+            return String.valueOf(strDate.charAt(strDate.length()-7));
+        }
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         overridePendingTransition(0, 0);
@@ -99,7 +118,18 @@ public class MainActivity extends Activity {
                 }
                 data obj=new data();
                 obj.name=data.getString(1);
-                obj.itemName=taskObject.description+"\t\t\t\t\t* Past Item: "+taskObject.lowestName;
+                String year1="",month1="",day10="",dateFormated;
+                if(!taskObject.dueDate.equals("")) {
+                    year1 = calculateYear(taskObject.dueDate);
+                    month1 = calculateMonth(taskObject.dueDate);
+                    day10 = calculateDay(taskObject.dueDate);
+                    dateFormated=day10+"/"+month1+"/"+year1;
+                }
+                else
+                {
+                    dateFormated="No Dates";
+                }
+                obj.itemName="Task: "+taskObject.description+"  Date: "+dateFormated+"\t\t* Past Item: "+taskObject.lowestName;
                 obj.time=taskObject.dueDate;
                 obj.lowestTimeEver=taskObject.lowestTime;
                 array1.add(obj);
