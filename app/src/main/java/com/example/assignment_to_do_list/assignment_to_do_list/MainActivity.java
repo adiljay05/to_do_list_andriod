@@ -107,7 +107,8 @@ public class MainActivity extends Activity {
                         getSmallestTime(strDate, task.getString(4),task);
                         getOverAllSmallestTime(task.getString(4),task);
                     }
-                }else{
+                }
+                else{
                     taskObject.itemid="";
                     taskObject.dataId="";
                     taskObject.description="No Items";
