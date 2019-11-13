@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
@@ -394,8 +395,11 @@ class CustomAdapter extends BaseAdapter {
 //            Log.i("Month",m2);
 //            Log.i("Day",d2);
 
-            if(y1.equals(y2) && m1.equals(m2) && d1.equals(d2))
+            if(y1.equals(y2) && m1.equals(m2) && d1.equals(d2)) {
                 view.setBackgroundColor(Color.YELLOW);
+                //view.setBackground(Drawable.createFromPath(String.valueOf(R.drawable.border)));
+                view.setBackgroundResource(R.drawable.border_with_yellow_background);
+            }
 
         }
         if(l.get(position).lowestTimeEver != null)
@@ -410,7 +414,7 @@ class CustomAdapter extends BaseAdapter {
                 if(!l.get(position).lowestTimeEver.equals("")) {
                     selectedTime = Double.parseDouble(l.get(position).lowestTimeEver);
                     if (selectedTime < currentTime)
-                        view.setBackgroundColor(Color.RED);
+                        view.setBackgroundResource(R.drawable.border_with_red_background);
                 }
             }
 
