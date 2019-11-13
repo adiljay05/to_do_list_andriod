@@ -1,20 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="10dp"
-    tools:context=".MainActivity">
+    android:padding="15dp"
+        tools:context=".MainActivity">
 
         <Button
-            android:layout_width="350dp"
-            android:layout_height="80dp"
+            android:id="@+id/newItemButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:background="#a29088"
             android:text="Add new List"
             android:textSize="24dp"
             android:layout_marginBottom="10dp"
-            android:background="#0066ff"
-            android:id="@+id/newItemButton"
+            android:layout_marginLeft="100dp"
             tools:ignore="HardcodedText" />
+
         <ListView
 
             android:layout_width="match_parent"
@@ -27,3 +31,4 @@
 
 
 </RelativeLayout>
+
